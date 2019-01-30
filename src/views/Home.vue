@@ -19,23 +19,25 @@
 <script>
 import Inputmask from 'inputmask';
 
+/* eslint-disable no-unused-vars */
+Inputmask.extendDefinitions({
+  x: {
+    validator(chrs, buffer, pos, strict, opts) {
+      const value = new RegExp('([0-9]|0[0-9]|1[0-9]|2[0-3])');
+      return value.test(buffer[pos - 3] + buffer[pos - 2] + buffer[pos - 1] + chrs);
+    },
+    definitionSymbol: 'i',
+  },
+  5: {
+    validator: '[0-5]',
+    definitionSymbol: 'i',
+  },
+});
+
 // Taken from https://github.com/scleriot/vue-inputmask/blob/master/src/vue-inputmask.js
 const Mask = {
   bind: (el, binding) => {
     Inputmask(binding.value).mask(el);
-    /* eslint-disable quote-props */
-    Inputmask.extendDefinitions({
-      'x': {
-        'validator': '[0-5]',
-        definitionSymbol: 'i',
-      },
-    });
-    Inputmask.extendAliases({
-      'numeric': {
-        mask: 'x',
-        greedy: false,
-      },
-    });
   },
 };
 
@@ -43,7 +45,7 @@ export default {
   data() {
     return {
       value: '00:00',
-      mask: '99:x9',
+      mask: 'xx:59',
     };
   },
   directives: {
