@@ -1,7 +1,8 @@
 <template>
   <div class="grid-x grid-margin-x grid-padding-x">
     <div class="cell medium-4">
-      <h3>Masking</h3>
+      <h3>Masking (HH:MM)</h3>
+      <p><small>Only accepts values from <code>00:00</code> to <code>23:59</code></small></p>
       <input
         type="text"
         v-model="value"
@@ -11,7 +12,6 @@
         v-mask="mask"
         @input="handleInputBox"
       />
-      <p>{{ maskedValue }}</p>
     </div>
   </div>
 </template>
@@ -19,18 +19,29 @@
 <script>
 import Inputmask from 'inputmask';
 
-/* eslint-disable no-unused-vars */
 Inputmask.extendDefinitions({
   x: {
-    validator(chrs, buffer, pos, strict, opts) {
-      const value = new RegExp('([0-9]|0[0-9]|1[0-9]|2[0-3])');
-      return value.test(buffer[pos - 3] + buffer[pos - 2] + buffer[pos - 1] + chrs);
+    validator(chrs, buffer, pos) {
+      const value = new RegExp('([0-1][0-9])|(2[0-3])');
+      const str = buffer.buffer[pos - 1] + chrs;
+      return value.test(str);
     },
+    definitionSymbol: 'i',
+  },
+  2: {
+    validator: '[0-2]',
     definitionSymbol: 'i',
   },
   5: {
     validator: '[0-5]',
     definitionSymbol: 'i',
+  },
+});
+
+Inputmask.extendAliases({
+  numeric: {
+    mask: 'x',
+    greedy: false,
   },
 });
 
@@ -45,17 +56,11 @@ export default {
   data() {
     return {
       value: '00:00',
-      mask: 'xx:59',
+      mask: '2x:59',
     };
   },
   directives: {
     mask: Mask,
-  },
-  computed: {
-    maskedValue() {
-      if (this.value && this.mask) return Inputmask.format(this.value, this.mask);
-      return this.value;
-    },
   },
   methods: {
     focusInputBox() {
