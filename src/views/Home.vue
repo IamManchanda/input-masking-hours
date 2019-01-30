@@ -23,15 +23,27 @@ import Inputmask from 'inputmask';
 const Mask = {
   bind: (el, binding) => {
     Inputmask(binding.value).mask(el);
+    /* eslint-disable quote-props */
+    Inputmask.extendDefinitions({
+      'x': {
+        'validator': '[0-5]',
+        definitionSymbol: 'i',
+      },
+    });
+    Inputmask.extendAliases({
+      'numeric': {
+        mask: 'x',
+        greedy: false,
+      },
+    });
   },
 };
 
 export default {
-  name: 'home',
   data() {
     return {
       value: '00:00',
-      mask: '99:99',
+      mask: '99:x9',
     };
   },
   directives: {
